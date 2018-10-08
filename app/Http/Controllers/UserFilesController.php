@@ -75,12 +75,28 @@ class UserFilesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\UserFile  $userFiles
+     * @param  \App\UserFile  $userFile
      * @return \Illuminate\Http\Response
      */
-    public function show(UserFile $userFiles)
+    public function show(UserFile $userFile)
     {
-        //
+        try {
+            print_r($userFile->toArray());die;
+            $file_path = storage_path() .'/file/'. $filename;
+            if (file_exists($file_path))
+            {
+                // Send Download
+                return Response::download($file_path, $filename, [
+                    'Content-Length: '. filesize($file_path)
+                ]);
+            }
+            else
+            {
+                return $this->responseNotFound('File not found !');
+            }
+        } catch (\Exception $exception) {
+            return $this->responseException($exception);
+        }
     }
 
     /**
