@@ -1,0 +1,26 @@
+
+var fileTypeImagePath = '/img/';
+var fileTypeImageExtension = '.png';
+var appLoaderImageElement = '#app-loader-image';
+var filesListTableElement = '#files-list-table';
+var fileUploadToggleElement = '#file-upload';
+var fileUploadFormElement = '#file-upload-form';
+var fileUploadSubmitElement = '#file-upload-submit';
+var fileUploadFileElement = '#form-file-element';
+var folderCreateToggleElement = '#folder-create';
+var folderCreateNameElement = '#form-name-element';
+var folderTraversalLinkElement = '.traverse-folder';
+var lastFolderButtonElement = '#last-folder';
+var fileActionContextMenuElement = '#file-action-context-menu';
+var fileActionContextMenuDownloadElement = '#download-file';
+var fileActionContextMenuRenameElement = '#rename-file';
+var fileActionContextMenuDeleteElement = '#delete-file';
+var inlineEditElements = '.editable-text-full';
+var dataAttributeKeySeparator = '-';
+var fileDataAttributeIdKey = 'data' + dataAttributeKeySeparator + 'id';
+var csrfTokenElement = '#csrf-token-field';
+var csrfTokenName = '_token';
+var userFileKeyParentId = '';
+var fileTypes = [];
+var fileTypeFolder = '';
+var maxFileSize = 500;
