@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\FileHelper;
 use App\Http\Requests\CreateFileRequest;
 use App\Services\Files\CreateFileService;
 use App\User;
@@ -75,23 +76,23 @@ class UserFilesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\UserFile  $userFile
+     * @param  \App\UserFile  $file
      * @return \Illuminate\Http\Response
      */
-    public function show(UserFile $userFile)
+    public function show(UserFile $file)
     {
         try {
-            print_r($userFile->toArray());die;
-            $file_path = storage_path() .'/file/'. $filename;
-            if (file_exists($file_path))
-            {
-                // Send Download
-                return Response::download($file_path, $filename, [
-                    'Content-Length: '. filesize($file_path)
-                ]);
-            }
-            else
-            {
+            if ($file->user_id == Auth::user()->id) {
+
+                $file_path = FileHelper::getUploadPath(true) . $file->name;
+                if (file_exists($file_path)) {
+                    return response()->download($file_path, $file->name, [
+                        'Content-Length: ' . filesize($file_path)
+                    ]);
+                } else {
+                    return $this->responseNotFound('File not found !');
+                }
+            } else {
                 return $this->responseNotFound('File not found !');
             }
         } catch (\Exception $exception) {
@@ -102,10 +103,10 @@ class UserFilesController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\UserFile  $userFiles
+     * @param  \App\UserFile  $file
      * @return \Illuminate\Http\Response
      */
-    public function edit(UserFile $userFiles)
+    public function edit(UserFile $file)
     {
         //
     }
@@ -114,10 +115,10 @@ class UserFilesController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\UserFile $userFiles
+     * @param  \App\UserFile $file
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, UserFile $userFiles)
+    public function update(Request $request, UserFile $file)
     {
         //
     }
@@ -125,10 +126,10 @@ class UserFilesController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\UserFile  $userFiles
+     * @param  \App\UserFile  $file
      * @return \Illuminate\Http\Response
      */
-    public function destroy(UserFile $userFiles)
+    public function destroy(UserFile $file)
     {
         //
     }

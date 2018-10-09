@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Class UserFile
  * @package App\UserFile
  *
+ * @property int $id
  * @property string $name
  * @property int $size
  * @property int $file_type_id

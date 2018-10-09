@@ -53,18 +53,20 @@ $( document ).ready(function () {
         for (var i = 0 ; i < items.length ; i++) {
             var folderTraversalTagOpen = '';
             var folderTraversalTagClose = '';
+            var folderDataAttribute = '';
             if (items[i].file_type_id == getFileTypeFolderId()) {
                 folderTraversalTagOpen = '<a href="#" class="' + folderTraversalLinkElement.split('.')[1] + '" ' + fileDataAttributeIdKey + '="' + items[i].id + '">';
                 folderTraversalTagClose = '</a>';
+                folderDataAttribute = fileDataAttributeFolderKey + '="' + fileDataAttributeFolderValue + '"';
             }
 
             $( filesListTableElement ).append(
-                '<tr>' +
+                '<tr ' + fileDataAttributeIdKey + '="' + items[i].id + '" ' + folderDataAttribute + '>' +
                     '<td>' +
                         folderTraversalTagOpen +
                         '<img class="file-image" src="' + baseUrl + fileTypeImagePath + getFileTypeImageName(items[i].file_type_id) + fileTypeImageExtension + '" />' +
-                        '<span class="' + inlineEditElements.split('.')[1] + '">' + items[i].name + '</span>' +
                         folderTraversalTagClose +
+                        '<span class="' + inlineEditElements.split('.')[1] + '">' + items[i].name + '</span>' +
                     '</td>' +
                     '<td>' +
                         items[i].size +
@@ -100,11 +102,15 @@ $( document ).ready(function () {
     /* Bind File Action Context Menu On Hover of row */
     function bindFileActionContextMenuOnHover() {
         $( filesListTableElement + ' tr' ).not(':first').hover(function () {
-            $(this).children().last().append($(fileActionContextMenuElement)).addClass('open');
-            $(this).dropdown();
-            $(fileActionContextMenuElement).css('top', '50%');
+            $( this ).children().last().append($(fileActionContextMenuElement)).addClass('open');
+            $( this ).dropdown();
+            $( fileActionContextMenuElement ).css('top', '50%');
+            if (checkFileTypeFolderThroughDataElement($( this ))) {
+                $( fileActionContextMenuDownloadElement ).hide();
+            }
         }, function () {
-            $(this).children().last().removeClass('open');
+            $( this ).children().last().removeClass('open');
+            $( fileActionContextMenuDownloadElement ).show();
         });
     }
 
@@ -186,6 +192,17 @@ $( document ).ready(function () {
         });
     }
 
+    function getContextMenuClosestDataElement(element) {
+        return element.parents('tr');
+    }
+
+    function checkFileTypeFolderThroughDataElement(element) {
+        if (element.data(fileDataAttributeFolderOnlyKey) == fileDataAttributeFolderValue) {
+            return true;
+        }
+        return false;
+    }
+
     /* Form openers and closers for both file creation and folder creation */
     $( fileUploadToggleElement ).click(function () {
         $( fileUploadFormElement ).toggle();
@@ -246,5 +263,10 @@ $( document ).ready(function () {
         fetchUserFiles('?' + userFileKeyParentId + '=' + lastFolderParentId);
         currentFolderParentId = lastFolderParentId;
         toggleLastFolderButton();
+    });
+
+    /* Download file button click event */
+    $( fileActionContextMenuDownloadElement ).click(function () {
+        window.location = baseUrl + '/file/' + getContextMenuClosestDataElement($( this )).data(fileDataAttributeIdOnlyKey);
     });
 });

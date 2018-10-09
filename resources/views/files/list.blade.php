@@ -19,7 +19,7 @@
 </table>
 <ul id="file-action-context-menu" class="dropdown-menu" role="menu">
     <li><a tabindex="-1" href="#" class="download-file">Download</a></li>
-    <li><a tabindex="-1" href="#" class="rename-file">Rename</a></li>
+    {{--<li><a tabindex="-1" href="#" class="rename-file">Rename</a></li>--}}
     <li><a tabindex="-1" href="#" class="delete-file">Delete</a></li>
 </ul>
 <script>

@@ -60,7 +60,7 @@ class CreateFileService
                     $name = $this->getCleanedFileName($file->getClientOriginalName());
                     $content = file_get_contents($file->getRealPath());
 
-                    Storage::put(config('constants.FILE_UPLOAD_PATH') . Auth::user()->id.'/' . $name, $content, 'public');
+                    Storage::put(FileHelper::getUploadPath() . $name, $content, 'public');
 
                     $userFile = new UserFile();
                     $userFile->name = $name;
