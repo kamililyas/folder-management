@@ -131,6 +131,15 @@ class UserFilesController extends Controller
      */
     public function destroy(UserFile $file)
     {
-        //
+        try {
+            $file->delete();
+
+            return $this->setStatusCode(200)->responseSuccess([
+                'message' => trans('messages.user_file_deleted_success'),
+                'files' => $file,
+            ]);
+        } catch (\Exception $exception) {
+            return $this->responseException($exception);
+        }
     }
 }

@@ -81,6 +81,8 @@ $( document ).ready(function () {
         bindFileActionContextMenuOnHover();
         bindFolderTraversalLinkClick();
         bindInlineEditOnClick();
+        bindFileActionContextMenuDownloadOnClick();
+        bindFileActionContextMenuDeleteOnClick();
     }
 
     function getFileTypeImageName(fileTypeId) {
@@ -102,15 +104,19 @@ $( document ).ready(function () {
     /* Bind File Action Context Menu On Hover of row */
     function bindFileActionContextMenuOnHover() {
         $( filesListTableElement + ' tr' ).not(':first').hover(function () {
-            $( this ).children().last().append($(fileActionContextMenuElement)).addClass('open');
+            $( this ).children().last().append($( fileActionContextMenuElement )).addClass('open');
             $( this ).dropdown();
             $( fileActionContextMenuElement ).css('top', '50%');
             if (checkFileTypeFolderThroughDataElement($( this ))) {
-                $( fileActionContextMenuDownloadElement ).hide();
+                // $( fileActionContextMenuDownloadElement ).hide();
+                // $( fileActionContextMenuDeleteElement ).hide();
+                $( fileActionContextMenuElement ).hide();
             }
         }, function () {
             $( this ).children().last().removeClass('open');
-            $( fileActionContextMenuDownloadElement ).show();
+            // $( fileActionContextMenuDownloadElement ).show();
+            // $( fileActionContextMenuDeleteElement ).show();
+            $( fileActionContextMenuElement ).show();
         });
     }
 
@@ -128,7 +134,9 @@ $( document ).ready(function () {
     }
 
     function clearFileListTable() {
+        var clonedfileActionContextMenuElement= $( fileActionContextMenuElement );
         $( filesListTableElement ).find('tr:gt(0)').remove();
+        $( filesListTableElement ).after(clonedfileActionContextMenuElement);
     }
 
     function toggleLastFolderButton() {
@@ -192,15 +200,69 @@ $( document ).ready(function () {
         });
     }
 
+    /* Bind Download file button click event */
+    function bindFileActionContextMenuDownloadOnClick() {
+        $(fileActionContextMenuDownloadElement).click(function () {
+            window.location = baseUrl + '/file/' + getContextMenuClosestDataElement($(this)).data(fileDataAttributeIdOnlyKey);
+        });
+    }
+
+    /* Bind Delete File/Folder button click event */
+    function bindFileActionContextMenuDeleteOnClick() {
+        $(fileActionContextMenuDeleteElement).click(fileActionContextMenuDeleteMethod = function () {
+            var headers = {};
+            headers[csrfTokenHeaderName] = $(csrfTokenElement).val();
+            headers["Accept"] = "application/json";
+
+            jqxhr(
+                {
+                    url: baseUrl + '/file/' + getContextMenuClosestDataElement($(this)).data(fileDataAttributeIdOnlyKey),
+                    type: 'DELETE',
+                    headers: headers,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        console.log(data);
+
+                        if (data !== undefined && data.length != 0) {
+                            if (data.files !== undefined && data.files.length != 0) {
+                                clearFileListTableAndFetchUserFiles(currentFolderParentId);
+                            }
+                            else {
+                                alert('No Data Found !');
+                            }
+                        }
+                        else {
+                            alert('No Data Found !');
+                        }
+                    },
+                    error: function (data) {
+                        alert('fail');
+                        console.log(data);
+                    }
+                },
+                function () {
+                },
+                function () {
+                },
+                function () {
+                }
+            );
+        });
+    }
+
     function getContextMenuClosestDataElement(element) {
         return element.parents('tr');
     }
 
     function checkFileTypeFolderThroughDataElement(element) {
-        if (element.data(fileDataAttributeFolderOnlyKey) == fileDataAttributeFolderValue) {
-            return true;
-        }
-        return false;
+        return (element.data(fileDataAttributeFolderOnlyKey) == fileDataAttributeFolderValue);
+    }
+
+    function clearFileListTableAndFetchUserFiles(parentId) {
+        clearFileListTable();
+        fetchUserFiles('?' + userFileKeyParentId + '=' + parentId);
     }
 
     /* Form openers and closers for both file creation and folder creation */
@@ -265,8 +327,4 @@ $( document ).ready(function () {
         toggleLastFolderButton();
     });
 
-    /* Download file button click event */
-    $( fileActionContextMenuDownloadElement ).click(function () {
-        window.location = baseUrl + '/file/' + getContextMenuClosestDataElement($( this )).data(fileDataAttributeIdOnlyKey);
-    });
 });

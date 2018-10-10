@@ -24,6 +24,7 @@ var fileDataAttributeFolderKey = 'data' + dataAttributeKeySeparator + fileDataAt
 var fileDataAttributeFolderValue = fileDataAttributeFolderOnlyKey;
 var csrfTokenElement = '#csrf-token-field';
 var csrfTokenName = '_token';
+var csrfTokenHeaderName = 'X-CSRF-Token';
 var userFileKeyParentId = '';
 var fileTypes = [];
 var fileTypeFolder = '';
